@@ -15,11 +15,17 @@
   <div id="loading" class="loading" style="display:none;">Processing...</div>
   <h2>Preview</h2>
   <div id="preview-container"></div>
+  <button id="download-all" class="download-btn" style="display:none;">Download All</button>
   <script>
     const form = document.getElementById('upload-form');
     const input = document.getElementById('image');
     const dropArea = document.getElementById('drop-area');
     const loading = document.getElementById('loading');
+    const downloadAllBtn = document.getElementById('download-all');
+
+    downloadAllBtn.addEventListener('click', () => {
+      window.location = '/download-zip';
+    });
 
     dropArea.addEventListener('click', () => input.click());
     ['dragenter', 'dragover'].forEach(event => {
@@ -44,6 +50,7 @@
       e.preventDefault();
       if (input.files.length === 0) return;
       loading.style.display = 'block';
+      downloadAllBtn.style.display = 'none';
       try {
         const formData = new FormData();
         Array.from(input.files).forEach(file => formData.append('images', file));
@@ -67,6 +74,9 @@
             wrapper.appendChild(link);
             container.appendChild(wrapper);
           });
+          if (data.urls.length) {
+            downloadAllBtn.style.display = 'inline-block';
+          }
         } else {
           alert('Processing failed');
         }
