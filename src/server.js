@@ -9,15 +9,18 @@ const upload = multer({ dest: 'uploads/' });
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post('/upload', upload.array('images'), async (req, res) => {
   try {
-    const inputPath = req.file.path;
-    const fileName = `output-${Date.now()}.jpg`;
-    const outputPath = path.join('uploads', fileName);
-    await addBorderAndText({ imagePath: inputPath, outputPath });
-
-    res.json({ url: '/uploads/' + fileName });
-
+    const urls = [];
+    const files = req.files || [];
+    for (const [index, file] of files.entries()) {
+      const inputPath = file.path;
+      const fileName = `output-${Date.now()}-${index}.jpg`;
+      const outputPath = path.join('uploads', fileName);
+      await addBorderAndText({ imagePath: inputPath, outputPath });
+      urls.push('/uploads/' + fileName);
+    }
+    res.json({ urls });
   } catch (err) {
     console.error(err);
     res.status(500).send('Processing failed');
