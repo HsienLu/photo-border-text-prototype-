@@ -3,6 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Photo Border</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #upload-form {
+      margin: 20px auto;
+    }
+    #preview {
+      margin-top: 20px;
+      max-width: 100%;
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <h1>Upload Photo</h1>
@@ -11,7 +25,7 @@
     <button type="submit">Process</button>
   </form>
   <h2>Preview</h2>
-  <img id="preview" style="max-width:100%;display:none;" />
+  <img id="preview" />
   <script>
     document.getElementById('upload-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -21,10 +35,9 @@
       formData.append('image', input.files[0]);
       const res = await fetch('/upload', { method: 'POST', body: formData });
       if (res.ok) {
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
+        const data = await res.json();
         const img = document.getElementById('preview');
-        img.src = url;
+        img.src = data.url;
         img.style.display = 'block';
       } else {
         alert('Processing failed');
