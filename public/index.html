@@ -12,12 +12,14 @@
     <input type="file" id="image" name="images" multiple accept="image/*" required>
     <button type="submit" class="submit-btn">Process</button>
   </form>
+  <div id="loading" class="loading" style="display:none;">Processing...</div>
   <h2>Preview</h2>
   <div id="preview-container"></div>
   <script>
     const form = document.getElementById('upload-form');
     const input = document.getElementById('image');
     const dropArea = document.getElementById('drop-area');
+    const loading = document.getElementById('loading');
 
     dropArea.addEventListener('click', () => input.click());
     ['dragenter', 'dragover'].forEach(event => {
@@ -41,30 +43,35 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (input.files.length === 0) return;
-      const formData = new FormData();
-      Array.from(input.files).forEach(file => formData.append('images', file));
-      const res = await fetch('/upload', { method: 'POST', body: formData });
-      if (res.ok) {
-        const data = await res.json();
-        const container = document.getElementById('preview-container');
-        container.innerHTML = '';
-        data.urls.forEach(url => {
-          const wrapper = document.createElement('div');
-          const img = document.createElement('img');
-          img.src = url;
-          img.className = 'preview-img';
-          img.onload = () => (img.style.display = 'block');
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = '';
-          link.textContent = 'Download';
-          link.className = 'download-btn';
-          wrapper.appendChild(img);
-          wrapper.appendChild(link);
-          container.appendChild(wrapper);
-        });
-      } else {
-        alert('Processing failed');
+      loading.style.display = 'block';
+      try {
+        const formData = new FormData();
+        Array.from(input.files).forEach(file => formData.append('images', file));
+        const res = await fetch('/upload', { method: 'POST', body: formData });
+        if (res.ok) {
+          const data = await res.json();
+          const container = document.getElementById('preview-container');
+          container.innerHTML = '';
+          data.urls.forEach(url => {
+            const wrapper = document.createElement('div');
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'preview-img';
+            img.onload = () => (img.style.display = 'block');
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '';
+            link.textContent = 'Download';
+            link.className = 'download-btn';
+            wrapper.appendChild(img);
+            wrapper.appendChild(link);
+            container.appendChild(wrapper);
+          });
+        } else {
+          alert('Processing failed');
+        }
+      } finally {
+        loading.style.display = 'none';
       }
     });
   </script>

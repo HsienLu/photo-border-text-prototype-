@@ -61,3 +61,15 @@ body {
 .download-btn:hover {
   background-color: #1976D2;
 }
+
+.loading {
+  font-weight: bold;
+  margin-top: 10px;
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
