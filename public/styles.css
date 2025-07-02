@@ -21,6 +21,14 @@ body {
   margin: 20px auto;
 }
 
+.options {
+  margin: 10px 0;
+}
+
+.options label {
+  margin-right: 10px;
+}
+
 .submit-btn {
   background-color: #4CAF50;
   color: white;
