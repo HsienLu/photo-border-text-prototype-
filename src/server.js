@@ -8,11 +8,13 @@ const app = express();
 const upload = multer({ dest: 'uploads/' });
 
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.post('/upload', upload.single('image'), async (req, res) => {
   try {
     const inputPath = req.file.path;
-    const outputPath = path.join('uploads', `output-${Date.now()}.jpg`);
+    const fileName = `output-${Date.now()}.jpg`;
+    const outputPath = path.join('uploads', fileName);
     await addBorderAndText({ imagePath: inputPath, outputPath });
 
     const buffer = await fs.readFile(outputPath);
@@ -21,6 +23,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
     fs.unlink(inputPath).catch(() => {});
     fs.unlink(outputPath).catch(() => {});
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Processing failed');
