@@ -21,7 +21,9 @@
   </form>
   <div id="loading" class="loading" style="display:none;">Processing...</div>
   <h2>Preview</h2>
-  <canvas id="preview-canvas"></canvas>
+  <div id="preview-wrapper" style="display:none;">
+    <img id="preview-image" class="preview-img" />
+  </div>
   <div id="preview-container"></div>
   <button id="download-all" class="download-btn" style="display:none;">Download All</button>
   <script>
@@ -35,48 +37,41 @@
     const leftField = document.getElementById('leftBorder');
     const rightField = document.getElementById('rightBorder');
     const colorField = document.getElementById('borderColor');
-    const canvas = document.getElementById('preview-canvas');
-    const ctx = canvas.getContext('2d');
-    let currentImage = null;
+    const previewWrapper = document.getElementById('preview-wrapper');
+    const previewImage = document.getElementById('preview-image');
 
-    function drawImageToCanvas(img) {
+    function updatePreviewStyles() {
       const top = parseInt(topField.value, 10) || 0;
       const bottom = parseInt(bottomField.value, 10) || 0;
       const left = parseInt(leftField.value, 10) || 0;
       const right = parseInt(rightField.value, 10) || 0;
-      const newWidth = img.width + left + right;
-      const newHeight = img.height + top + bottom;
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-      ctx.fillStyle = colorField.value;
-      ctx.fillRect(0, 0, newWidth, newHeight);
-      ctx.drawImage(img, left, top);
+      previewWrapper.style.paddingTop = `${top}px`;
+      previewWrapper.style.paddingBottom = `${bottom}px`;
+      previewWrapper.style.paddingLeft = `${left}px`;
+      previewWrapper.style.paddingRight = `${right}px`;
+      previewWrapper.style.backgroundColor = colorField.value;
     }
 
     function renderPreview() {
       if (!input.files || !input.files[0]) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        currentImage = null;
+        previewImage.style.display = 'none';
+        previewWrapper.style.display = 'none';
         return;
       }
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          currentImage = img;
-          drawImageToCanvas(img);
-        };
-        img.src = e.target.result;
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+        previewWrapper.style.display = 'inline-block';
+        updatePreviewStyles();
       };
       reader.readAsDataURL(file);
     }
 
     input.addEventListener('change', renderPreview);
     [topField, bottomField, leftField, rightField, colorField].forEach(el => {
-      el.addEventListener('input', () => {
-        if (currentImage) drawImageToCanvas(currentImage);
-      });
+      el.addEventListener('input', updatePreviewStyles);
     });
 
     downloadAllBtn.addEventListener('click', () => {
