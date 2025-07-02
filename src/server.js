@@ -4,6 +4,12 @@ const path = require('path');
 const archiver = require('archiver');
 const { addBorderAndText } = require('./addBorderAndText');
 
+// Parse integers safely so invalid values won't become NaN
+function safeParseInt(value, defaultValue) {
+  const parsed = parseInt(value, 10);
+  return Number.isNaN(parsed) ? defaultValue : parsed;
+}
+
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 let processedFilePaths = [];
@@ -23,10 +29,10 @@ app.post('/upload', upload.array('images'), async (req, res) => {
       await addBorderAndText({
         imagePath: inputPath,
         outputPath,
-        topBorderSize: parseInt(req.body.topBorder, 10),
-        bottomBorderSize: parseInt(req.body.bottomBorder, 10),
-        leftBorderSize: parseInt(req.body.leftBorder, 10),
-        rightBorderSize: parseInt(req.body.rightBorder, 10),
+        topBorderSize: safeParseInt(req.body.topBorder, undefined),
+        bottomBorderSize: safeParseInt(req.body.bottomBorder, undefined),
+        leftBorderSize: safeParseInt(req.body.leftBorder, undefined),
+        rightBorderSize: safeParseInt(req.body.rightBorder, undefined),
         backgroundColor: req.body.borderColor,
       });
       urls.push('/uploads/' + fileName);
