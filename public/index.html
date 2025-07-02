@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Photo Border</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Upload Photo</h1>
-  <form id="upload-form">
-    <input type="file" id="image" name="image" accept="image/*" required>
-    <button type="submit">Process</button>
-  </form>
-  <h2>Preview</h2>
-  <img id="preview" style="max-width:100%;display:none;" />
+
+  <div class="container">
+    <h1>Upload Photo</h1>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*" required>
+      <button type="submit">Process</button>
+    </form>
+    <img id="preview" alt="Processed preview" />
+  </div>
   <script>
-    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    const form = document.getElementById('uploadForm');
+    const preview = document.getElementById('preview');
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = document.getElementById('image');
-      if (input.files.length === 0) return;
-      const formData = new FormData();
-      formData.append('image', input.files[0]);
-      const res = await fetch('/upload', { method: 'POST', body: formData });
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const img = document.getElementById('preview');
-        img.src = url;
-        img.style.display = 'block';
-      } else {
-        alert('Processing failed');
-      }
+      const formData = new FormData(form);
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if(!res.ok) return alert('Processing failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      preview.src = url;
+      preview.style.display = 'block';
     });
   </script>
-  </body>
-</html>
+</body>
 
+</html>

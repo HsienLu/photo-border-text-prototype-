@@ -17,12 +17,11 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     const outputPath = path.join('uploads', fileName);
     await addBorderAndText({ imagePath: inputPath, outputPath });
 
-    const buffer = await fs.readFile(outputPath);
-    res.set('Content-Type', 'image/jpeg');
-    res.send(buffer);
-
-    fs.unlink(inputPath).catch(() => {});
-    fs.unlink(outputPath).catch(() => {});
+    res.sendFile(path.resolve(outputPath), err => {
+      if (err) console.error(err);
+      fs.unlink(inputPath).catch(() => {});
+      fs.unlink(outputPath).catch(() => {});
+    });
 
   } catch (err) {
     console.error(err);
