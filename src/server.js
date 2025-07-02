@@ -20,7 +20,15 @@ app.post('/upload', upload.array('images'), async (req, res) => {
       const inputPath = file.path;
       const fileName = `output-${Date.now()}-${index}.jpg`;
       const outputPath = path.join('uploads', fileName);
-      await addBorderAndText({ imagePath: inputPath, outputPath });
+      await addBorderAndText({
+        imagePath: inputPath,
+        outputPath,
+        topBorderSize: parseInt(req.body.topBorder, 10),
+        bottomBorderSize: parseInt(req.body.bottomBorder, 10),
+        leftBorderSize: parseInt(req.body.leftBorder, 10),
+        rightBorderSize: parseInt(req.body.rightBorder, 10),
+        backgroundColor: req.body.borderColor,
+      });
       urls.push('/uploads/' + fileName);
       processedFilePaths.push(path.join(__dirname, '..', outputPath));
     }

@@ -10,6 +10,13 @@
   <div id="drop-area">Drag and drop multiple images here or click to select them</div>
   <form id="upload-form" class="upload-form">
     <input type="file" id="image" name="images" multiple accept="image/*" required>
+    <div class="options">
+      <label>Top <input type="number" id="topBorder" name="topBorder" value="200"></label>
+      <label>Bottom <input type="number" id="bottomBorder" name="bottomBorder" value="500"></label>
+      <label>Left <input type="number" id="leftBorder" name="leftBorder" value="200"></label>
+      <label>Right <input type="number" id="rightBorder" name="rightBorder" value="200"></label>
+      <label>Color <input type="color" id="borderColor" name="borderColor" value="#ffffff"></label>
+    </div>
     <button type="submit" class="submit-btn">Process</button>
   </form>
   <div id="loading" class="loading" style="display:none;">Processing...</div>
@@ -54,6 +61,11 @@
       try {
         const formData = new FormData();
         Array.from(input.files).forEach(file => formData.append('images', file));
+        formData.append('topBorder', document.getElementById('topBorder').value);
+        formData.append('bottomBorder', document.getElementById('bottomBorder').value);
+        formData.append('leftBorder', document.getElementById('leftBorder').value);
+        formData.append('rightBorder', document.getElementById('rightBorder').value);
+        formData.append('borderColor', document.getElementById('borderColor').value);
         const res = await fetch('/upload', { method: 'POST', body: formData });
         if (res.ok) {
           const data = await res.json();

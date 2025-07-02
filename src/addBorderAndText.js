@@ -8,8 +8,10 @@ const { extractExifText } = require('./exif');
  * 可透過參數自定義各項設定
  */
 const defaultOptions = {
-  borderSize: 200,
+  topBorderSize: 200,
   bottomBorderSize: 500,
+  leftBorderSize: 200,
+  rightBorderSize: 200,
   textMargin: 100,
   textImageMargin: 200,
   font: '72px Arial',
@@ -21,8 +23,10 @@ const defaultOptions = {
 async function addBorderAndText({
   imagePath,
   outputPath,
-  borderSize = defaultOptions.borderSize,
+  topBorderSize = defaultOptions.topBorderSize,
   bottomBorderSize = defaultOptions.bottomBorderSize,
+  leftBorderSize = defaultOptions.leftBorderSize,
+  rightBorderSize = defaultOptions.rightBorderSize,
   textMargin = defaultOptions.textMargin,
   textImageMargin = defaultOptions.textImageMargin,
   font = defaultOptions.font,
@@ -37,8 +41,8 @@ async function addBorderAndText({
     // 2. 載入圖片
     const image = await loadImage(imagePath);
     // 計算新畫布尺寸
-    const newWidth = image.width + borderSize * 2;
-    const newHeight = image.height + borderSize + bottomBorderSize;
+    const newWidth = image.width + leftBorderSize + rightBorderSize;
+    const newHeight = image.height + topBorderSize + bottomBorderSize;
 
     // 3. 建立畫布與取得 2D 繪圖上下文
     const canvas = createCanvas(newWidth, newHeight);
@@ -49,7 +53,7 @@ async function addBorderAndText({
     ctx.fillRect(0, 0, newWidth, newHeight);
 
     // 5. 在畫布上繪製圖片，從邊框距離處開始
-    ctx.drawImage(image, borderSize, borderSize);
+    ctx.drawImage(image, leftBorderSize, topBorderSize);
 
     // 6. 設定文字樣式
     ctx.fillStyle = textColor;
@@ -57,7 +61,7 @@ async function addBorderAndText({
     ctx.textAlign = textAlign;
 
     // 7. 計算文字起始 Y 軸位置（位於圖片下方加上設定的間隔）
-    const textStartY = image.height + borderSize + textImageMargin;
+    const textStartY = image.height + topBorderSize + textImageMargin;
     const textLines = text.split("\n");
 
     // 8. 逐行繪製文字
