@@ -6,10 +6,31 @@
 </head>
 <body>
   <h1>Upload Photo</h1>
-  <form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="image" accept="image/*" required>
+  <form id="upload-form">
+    <input type="file" id="image" name="image" accept="image/*" required>
     <button type="submit">Process</button>
   </form>
-</body>
+  <h2>Preview</h2>
+  <img id="preview" style="max-width:100%;display:none;" />
+  <script>
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('image');
+      if (input.files.length === 0) return;
+      const formData = new FormData();
+      formData.append('image', input.files[0]);
+      const res = await fetch('/upload', { method: 'POST', body: formData });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const img = document.getElementById('preview');
+        img.src = url;
+        img.style.display = 'block';
+      } else {
+        alert('Processing failed');
+      }
+    });
+  </script>
+  </body>
 </html>
 

@@ -14,11 +14,13 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     const inputPath = req.file.path;
     const outputPath = path.join('uploads', `output-${Date.now()}.jpg`);
     await addBorderAndText({ imagePath: inputPath, outputPath });
-    res.download(outputPath, err => {
-      if (err) console.error(err);
-      fs.unlink(inputPath).catch(() => {});
-      // output file may be kept for debugging; optionally remove
-    });
+
+    const buffer = await fs.readFile(outputPath);
+    res.set('Content-Type', 'image/jpeg');
+    res.send(buffer);
+
+    fs.unlink(inputPath).catch(() => {});
+    fs.unlink(outputPath).catch(() => {});
   } catch (err) {
     console.error(err);
     res.status(500).send('Processing failed');
