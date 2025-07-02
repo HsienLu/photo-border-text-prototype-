@@ -16,8 +16,14 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     const fileName = `output-${Date.now()}.jpg`;
     const outputPath = path.join('uploads', fileName);
     await addBorderAndText({ imagePath: inputPath, outputPath });
+
+    const buffer = await fs.readFile(outputPath);
+    res.set('Content-Type', 'image/jpeg');
+    res.send(buffer);
+
     fs.unlink(inputPath).catch(() => {});
-    res.json({ url: `/uploads/${fileName}` });
+    fs.unlink(outputPath).catch(() => {});
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Processing failed');
