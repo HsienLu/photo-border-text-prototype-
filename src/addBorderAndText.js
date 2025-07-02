@@ -7,17 +7,28 @@ const { extractExifText } = require('./exif');
  * 為圖片加上邊框與下方文字，文字內容從 EXIF 資訊中取得
  * 可透過參數自定義各項設定
  */
+const defaultOptions = {
+  borderSize: 200,
+  bottomBorderSize: 500,
+  textMargin: 100,
+  textImageMargin: 200,
+  font: '72px Arial',
+  textAlign: 'center',
+  backgroundColor: 'white',
+  textColor: 'black',
+};
+
 async function addBorderAndText({
-  imagePath,            // 圖片來源路徑
-  outputPath,           // 輸出圖片儲存路徑
-  borderSize = 200,     // 左右與上方邊框寬度（預設200px）
-  bottomBorderSize = 500, // 底部邊框高度（預設500px）
-  textMargin = 100,     // 文字行與行之間的間隔（預設100px）
-  textImageMargin = 200, // 圖片與文字區塊間的間隔（預設200px）
-  font = '72px Arial',  // 文字字體與大小
-  textAlign = 'center', // 文字對齊方式
-  backgroundColor = 'white', // 背景顏色（邊框區域）
-  textColor = 'black'   // 文字顏色
+  imagePath,
+  outputPath,
+  borderSize = defaultOptions.borderSize,
+  bottomBorderSize = defaultOptions.bottomBorderSize,
+  textMargin = defaultOptions.textMargin,
+  textImageMargin = defaultOptions.textImageMargin,
+  font = defaultOptions.font,
+  textAlign = defaultOptions.textAlign,
+  backgroundColor = defaultOptions.backgroundColor,
+  textColor = defaultOptions.textColor,
 }) {
   try {
     // 1. 從圖片中讀取 EXIF 資訊並組合成文字
