@@ -3,29 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Photo Border</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    #upload-form {
-      margin: 20px auto;
-    }
-    #preview {
-      margin-top: 20px;
-      max-width: 100%;
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Upload Photo</h1>
-  <form id="upload-form">
+  <form id="upload-form" class="upload-form">
     <input type="file" id="image" name="image" accept="image/*" required>
-    <button type="submit">Process</button>
+    <button type="submit" class="submit-btn">Process</button>
   </form>
   <h2>Preview</h2>
-  <img id="preview" />
+  <img id="preview" class="preview-img" />
   <script>
     document.getElementById('upload-form').addEventListener('submit', async (e) => {
       e.preventDefault();
