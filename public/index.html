@@ -21,6 +21,7 @@
   </form>
   <div id="loading" class="loading" style="display:none;">Processing...</div>
   <h2>Preview</h2>
+  <canvas id="preview-canvas"></canvas>
   <div id="preview-container"></div>
   <button id="download-all" class="download-btn" style="display:none;">Download All</button>
   <script>
@@ -29,6 +30,54 @@
     const dropArea = document.getElementById('drop-area');
     const loading = document.getElementById('loading');
     const downloadAllBtn = document.getElementById('download-all');
+    const topField = document.getElementById('topBorder');
+    const bottomField = document.getElementById('bottomBorder');
+    const leftField = document.getElementById('leftBorder');
+    const rightField = document.getElementById('rightBorder');
+    const colorField = document.getElementById('borderColor');
+    const canvas = document.getElementById('preview-canvas');
+    const ctx = canvas.getContext('2d');
+    let currentImage = null;
+
+    function drawImageToCanvas(img) {
+      const top = parseInt(topField.value, 10) || 0;
+      const bottom = parseInt(bottomField.value, 10) || 0;
+      const left = parseInt(leftField.value, 10) || 0;
+      const right = parseInt(rightField.value, 10) || 0;
+      const newWidth = img.width + left + right;
+      const newHeight = img.height + top + bottom;
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      ctx.fillStyle = colorField.value;
+      ctx.fillRect(0, 0, newWidth, newHeight);
+      ctx.drawImage(img, left, top);
+    }
+
+    function renderPreview() {
+      if (!input.files || !input.files[0]) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currentImage = null;
+        return;
+      }
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          currentImage = img;
+          drawImageToCanvas(img);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    input.addEventListener('change', renderPreview);
+    [topField, bottomField, leftField, rightField, colorField].forEach(el => {
+      el.addEventListener('input', () => {
+        if (currentImage) drawImageToCanvas(currentImage);
+      });
+    });
 
     downloadAllBtn.addEventListener('click', () => {
       window.location = '/download-zip';
@@ -51,6 +100,7 @@
       const dt = new DataTransfer();
       Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
       input.files = dt.files;
+      renderPreview();
     });
 
     form.addEventListener('submit', async (e) => {
