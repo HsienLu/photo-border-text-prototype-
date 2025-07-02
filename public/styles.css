@@ -53,15 +53,6 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-#preview-wrapper {
-  margin-top: 20px;
-  max-width: 600px;
-  width: 100%;
-  box-sizing: content-box;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
 
 .download-btn {
   background-color: #2196F3;
