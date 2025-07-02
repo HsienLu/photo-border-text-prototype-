@@ -1,7 +1,6 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs').promises;
 const { addBorderAndText } = require('./addBorderAndText');
 
 const app = express();
@@ -17,12 +16,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     const outputPath = path.join('uploads', fileName);
     await addBorderAndText({ imagePath: inputPath, outputPath });
 
-    const buffer = await fs.readFile(outputPath);
-    res.set('Content-Type', 'image/jpeg');
-    res.send(buffer);
-
-    fs.unlink(inputPath).catch(() => {});
-    fs.unlink(outputPath).catch(() => {});
+    res.json({ url: '/uploads/' + fileName });
 
   } catch (err) {
     console.error(err);
