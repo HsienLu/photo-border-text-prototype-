@@ -13,6 +13,7 @@
   </form>
   <h2>Preview</h2>
   <img id="preview" class="preview-img" />
+  <a id="download-link" class="download-btn" download style="display:none">Download</a>
   <script>
     document.getElementById('upload-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -26,6 +27,9 @@
         const img = document.getElementById('preview');
         img.src = data.url;
         img.style.display = 'block';
+        const link = document.getElementById('download-link');
+        link.href = data.url;
+        link.style.display = 'inline-block';
       } else {
         alert('Processing failed');
       }
