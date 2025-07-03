@@ -34,6 +34,7 @@ body {
   color: white;
   border: none;
   padding: 10px 20px;
+  margin-top: 10px;
   cursor: pointer;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -73,6 +74,35 @@ body {
 
 .loading {
   margin-top: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hidden {
+  display: none;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-weight: bold;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+
 }
 
 #selected-preview-container {
