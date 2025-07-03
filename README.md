@@ -32,3 +32,17 @@ npm run start:web
 ### 下載所有處理後的圖片
 
 上傳並處理完多張照片後，可按下「Download All」按鈕一次取得 ZIP 檔。伺服器提供 `/download-zip` 路徑會將上一批處理的檔案打包後下載。
+
+### 使用 React 版前端
+
+本專案已改寫前端為使用 Vite、React 與 TailwindCSS。開發階段可在 `client/` 目錄啟動
+Vite 開發伺服器：
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+建置完成後的檔案會產生在 `client/dist`，執行 Express 伺服器時若 `NODE_ENV=production`
+即會提供這些靜態檔案。

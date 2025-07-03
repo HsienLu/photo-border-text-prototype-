@@ -14,7 +14,12 @@ const app = express();
 const upload = multer({ dest: 'uploads/' });
 let processedFilePaths = [];
 
-app.use(express.static(path.join(__dirname, '../public')));
+if (process.env.NODE_ENV === 'production') {
+  const clientPath = path.join(__dirname, '../client/dist');
+  app.use(express.static(clientPath));
+} else {
+  app.use(express.static(path.join(__dirname, '../public')));
+}
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.post('/upload', upload.array('images'), async (req, res) => {
@@ -68,5 +73,10 @@ app.get('/download-zip', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  });
+}
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
 
