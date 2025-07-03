@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Photo Border</title>
+  <link rel="stylesheet" href="https://matcha.mizu.sh/matcha.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,7 +20,8 @@
     </div>
     <button type="submit" class="submit-btn">Process</button>
   </form>
-  <div id="loading" class="loading" style="display:none;">Processing...</div>
+  <div id="selected-preview-container"></div>
+  <div id="loading" class="loading hidden"><div class="spinner" role="status"></div><span class="loading-text">Processing...</span></div>
   <div id="preview-container"></div>
   <button id="download-all" class="download-btn" style="display:none;">Download All</button>
   <script>
@@ -51,16 +53,31 @@
         dropArea.classList.remove('highlight');
       });
     });
+    const selectedPreviewContainer = document.getElementById('selected-preview-container');
+
+    function updateSelectedPreview() {
+      selectedPreviewContainer.innerHTML = '';
+      Array.from(input.files).forEach(file => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'selected-preview-img';
+        img.onload = () => URL.revokeObjectURL(img.src);
+        selectedPreviewContainer.appendChild(img);
+      });
+    }
+
     dropArea.addEventListener('drop', e => {
       const dt = new DataTransfer();
       Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
       input.files = dt.files;
+      updateSelectedPreview();
     });
+    input.addEventListener('change', updateSelectedPreview);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (input.files.length === 0) return;
-      loading.style.display = 'block';
+      loading.classList.remove('hidden');
       downloadAllBtn.style.display = 'none';
       try {
         const formData = new FormData();
@@ -97,7 +114,7 @@
           alert('Processing failed');
         }
       } finally {
-        loading.style.display = 'none';
+        loading.classList.add('hidden');
       }
     });
   </script>
